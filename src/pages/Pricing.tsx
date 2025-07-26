@@ -8,11 +8,12 @@ const Pricing = () => {
       name: "Basic",
       price: "$5",
       duration: "per model",
-      deliveryTime: "1 - 3 days",
+      deliveryTime: "Delivery in 1 - 3 days",
       description: "Perfect for simple modeling needs",
       features: [
-        "High-quality modeling",
+        "Low-Poly modeling",
         "Up to 1 revision",
+        "Low texture details",
         "No rigging",
         "No animation"
       ]
@@ -21,12 +22,13 @@ const Pricing = () => {
       name: "Professional",
       price: "$20",
       duration: "per model",
-      deliveryTime: "4 - 7 days",
+      deliveryTime: "Delivery in 4 - 7 days",
       description: "Recommended for most projects",
       features: [
-        "High-quality modeling",
+        "Mid-Poly modeling",
         "Up to 3 revisions",
-        "Optional rigging",
+        "High Texture details",
+        "Rigging (if needed)",
         "No animation"
       ],
       popular: true
@@ -35,13 +37,14 @@ const Pricing = () => {
       name: "Premium",
       price: "$50",
       duration: "per model",
-      deliveryTime: "7 - 10 days",
+      deliveryTime: "Delivery in 7 - 10 days",
       description: "Everything you need for professional work",
       features: [
-        "Everything in Professional",
-        "Priority delivery",
+        "High-Poly Modeling",
+        "Unlimited of revisions",
+        "High Texture details",
         "Rigging (if needed)",
-        "Extra polish and detail"
+        "Animation (if needed)"
       ]
     }
   ];
