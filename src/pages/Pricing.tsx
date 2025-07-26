@@ -1,62 +1,64 @@
 import { Button } from "@/components/ui/button";
-import { Check, Star } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Check, Star, Clock } from "lucide-react";
 
 const Pricing = () => {
   const pricingTiers = [
     {
       name: "Basic",
-      price: "$50",
+      price: "$5",
       duration: "per model",
-      description: "Perfect for simple models and quick projects",
+      deliveryTime: "1 - 3 days",
+      description: "Perfect for simple modeling needs",
       features: [
-        "Low to medium poly count",
-        "Basic texturing",
-        "1 revision included",
-        "Delivery in 3-5 days",
-        "Standard file formats"
+        "High-quality modeling",
+        "Up to 1 revision",
+        "No rigging",
+        "No animation"
       ]
     },
     {
       name: "Professional",
-      price: "$150",
+      price: "$20",
       duration: "per model",
-      description: "Ideal for detailed characters and complex models",
+      deliveryTime: "4 - 7 days",
+      description: "Recommended for most projects",
       features: [
-        "High poly count",
-        "Advanced texturing & materials",
-        "3 revisions included",
-        "Delivery in 5-7 days",
-        "Multiple file formats",
-        "Basic rigging (if needed)"
+        "High-quality modeling",
+        "Up to 3 revisions",
+        "Optional rigging",
+        "No animation"
       ],
       popular: true
     },
     {
       name: "Premium",
-      price: "$300",
+      price: "$50",
       duration: "per model",
-      description: "For production-ready models with full customization",
+      deliveryTime: "7 - 10 days",
+      description: "Everything you need for professional work",
       features: [
-        "Ultra high poly count",
-        "PBR texturing & materials",
-        "Unlimited revisions",
-        "Delivery in 7-10 days",
-        "All file formats",
-        "Full rigging & animation",
-        "Source files included"
+        "Everything in Professional",
+        "Priority delivery",
+        "Rigging (if needed)",
+        "Extra polish and detail"
       ]
     }
   ];
+
+  const handleDiscordRedirect = () => {
+    window.open("https://discord.gg/yourdiscord", "_blank");
+  };
 
   return (
     <div className="min-h-screen bg-background pt-24">
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-16 animate-fade-in">
           <h1 className="text-5xl font-bold text-foreground mb-6">
-            <span className="text-primary">Pricing</span> Plans
+            Pricing Plans
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Transparent pricing for quality 3D modeling services. Choose the plan that fits your project needs.
+          <p className="text-lg text-muted-foreground">
+            1$ = 200 Robux
           </p>
         </div>
 
@@ -78,13 +80,17 @@ const Pricing = () => {
                 </div>
               )}
 
-              <div className="text-center mb-8">
+               <div className="text-center mb-8">
                 <h3 className="text-2xl font-bold text-foreground mb-2">{tier.name}</h3>
                 <div className="text-4xl font-bold text-primary mb-2">
                   {tier.price}
                   <span className="text-lg text-muted-foreground font-normal">
                     /{tier.duration}
                   </span>
+                </div>
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mb-2">
+                  <Clock className="w-4 h-4" />
+                  <span>{tier.deliveryTime}</span>
                 </div>
                 <p className="text-muted-foreground">{tier.description}</p>
               </div>
@@ -102,6 +108,7 @@ const Pricing = () => {
                 variant={tier.popular ? "default" : "outline"}
                 className="w-full"
                 size="lg"
+                onClick={handleDiscordRedirect}
               >
                 Get Started
               </Button>
@@ -118,10 +125,52 @@ const Pricing = () => {
               For large projects, bulk orders, or specialized requirements, 
               I offer custom pricing tailored to your specific needs.
             </p>
-            <Button variant="default" size="lg">
+            <Button variant="default" size="lg" onClick={handleDiscordRedirect}>
               Contact for Custom Quote
             </Button>
           </div>
+        </div>
+
+        <div className="mt-16 max-w-4xl mx-auto">
+          <h3 className="text-3xl font-bold text-foreground mb-8 text-center">
+            Frequently Asked Questions
+          </h3>
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="payment">
+              <AccordionTrigger className="text-foreground text-left">
+                How do I pay?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground">
+                <p className="mb-4">
+                  Payments are made via PayPal. Please click the button below to proceed:
+                </p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => window.open("https://paypal.me/youraccount", "_blank")}
+                >
+                  Pay via PayPal
+                </Button>
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="refund">
+              <AccordionTrigger className="text-foreground text-left">
+                Can I get a refund?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground">
+                Refunds are possible only within the first 24 hours of ordering, and only if work hasn't started.
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="rigging">
+              <AccordionTrigger className="text-foreground text-left">
+                What's included in rigging?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground">
+                Basic skeleton setup with bones and structure prepared for movement. Advanced rigging can be discussed if needed.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </div>
       </div>
     </div>
