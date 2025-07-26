@@ -45,11 +45,9 @@ const Home = () => {
               About Me
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Welcome to my digital realm! I'm Michael, a dedicated 3D artist who has been crafting immersive 
-              3D models and environments for the past 3 years. My journey began with a fascination for bringing 
-              digital concepts to life, and it has evolved into a professional pursuit of excellence in 3D modeling, 
-              texturing, and digital artistry. I specialize in creating everything from detailed characters and 
-              weapons to vehicles and architectural elements.
+              Hey, I'm Michael — a 3D artist with 3 years of experience making game-ready models using Blender. 
+              I focus on creating stylized characters, weapons, props, and environments for Roblox games. 
+              I love turning ideas into clean, optimized models that look great and work well in-game.
             </p>
           </div>
         </div>
