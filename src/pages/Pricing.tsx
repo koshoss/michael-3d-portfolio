@@ -47,7 +47,7 @@ const Pricing = () => {
   ];
 
   const handleDiscordRedirect = () => {
-    window.open("https://discord.gg/yourdiscord", "_blank");
+    window.open("https://discord.com/users/kosho_dev", "_blank");
   };
 
   return (
