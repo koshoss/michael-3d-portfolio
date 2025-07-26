@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      projects: {
+        Row: {
+          category: string
+          client_satisfaction: boolean
+          created_at: string
+          delivery_date: string | null
+          description: string | null
+          id: string
+          is_delivered_on_time: boolean
+          start_date: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          client_satisfaction?: boolean
+          created_at?: string
+          delivery_date?: string | null
+          description?: string | null
+          id?: string
+          is_delivered_on_time?: boolean
+          start_date?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          client_satisfaction?: boolean
+          created_at?: string
+          delivery_date?: string | null
+          description?: string | null
+          id?: string
+          is_delivered_on_time?: boolean
+          start_date?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       reviews: {
         Row: {
           created_at: string

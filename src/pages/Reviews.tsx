@@ -28,6 +28,7 @@ const Reviews = () => {
   const [editingReview, setEditingReview] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
   const [userIdentifier, setUserIdentifier] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
@@ -41,33 +42,44 @@ const Reviews = () => {
     setUserIdentifier(identifier);
   }, []);
 
-  // Load reviews from Supabase
+  // Load reviews and projects from Supabase
   useEffect(() => {
-    const fetchReviews = async () => {
+    const fetchData = async () => {
       try {
-        const { data, error } = await supabase
+        // Fetch reviews
+        const { data: reviewsData, error: reviewsError } = await supabase
           .from('reviews')
           .select('*')
           .order('created_at', { ascending: false });
 
-        if (error) {
-          console.error('Error fetching reviews:', error);
-          return;
+        if (reviewsError) {
+          console.error('Error fetching reviews:', reviewsError);
+        } else {
+          const processedReviews = reviewsData.map(review => ({
+            ...review,
+            isUserReview: review.user_identifier === userIdentifier
+          }));
+          setReviews(processedReviews);
         }
 
-        const processedReviews = data.map(review => ({
-          ...review,
-          isUserReview: review.user_identifier === userIdentifier
-        }));
+        // Fetch projects
+        const { data: projectsData, error: projectsError } = await supabase
+          .from('projects')
+          .select('*')
+          .order('created_at', { ascending: false });
 
-        setReviews(processedReviews);
+        if (projectsError) {
+          console.error('Error fetching projects:', projectsError);
+        } else {
+          setProjects(projectsData || []);
+        }
       } catch (error) {
-        console.error('Error fetching reviews:', error);
+        console.error('Error fetching data:', error);
       }
     };
 
     if (userIdentifier) {
-      fetchReviews();
+      fetchData();
     }
   }, [userIdentifier]);
 
@@ -312,16 +324,29 @@ const Reviews = () => {
     return `${Math.floor(diffInDays / 30)} months ago`;
   };
 
+  // Calculate real statistics from database
   const allReviews = reviews; // Only use real reviews from database
   const averageRating = allReviews.length > 0 
     ? (allReviews.reduce((sum, review) => sum + review.rating, 0) / allReviews.length).toFixed(1)
     : "5.0";
 
+  // Calculate project statistics
+  const totalProjects = projects.length;
+  const satisfiedClients = projects.filter(p => p.client_satisfaction).length;
+  const happyClientsPercentage = totalProjects > 0 
+    ? Math.round((satisfiedClients / totalProjects) * 100)
+    : 98;
+  
+  const onTimeDeliveries = projects.filter(p => p.is_delivered_on_time).length;
+  const onTimePercentage = totalProjects > 0 
+    ? Math.round((onTimeDeliveries / totalProjects) * 100)
+    : 100;
+
   const stats = [
-    { label: "Total Projects", value: "150+" },
-    { label: "Happy Clients", value: "98%" },
+    { label: "Total Projects", value: `${totalProjects}+` },
+    { label: "Happy Clients", value: `${happyClientsPercentage}%` },
     { label: "Average Rating", value: `${averageRating}/5` },
-    { label: "On-Time Delivery", value: "100%" }
+    { label: "On-Time Delivery", value: `${onTimePercentage}%` }
   ];
 
   return (
