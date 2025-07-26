@@ -25,7 +25,7 @@ const Home = () => {
             Hi, I'm <span className="text-primary">Michael</span>
           </h1>
           <p className="text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-            A passionate 19-year-old 3D modeler with 3 years of experience creating stunning digital worlds and characters
+            I'm 19 years old with 3 years of experience in 3D modeling
           </p>
           <Button
             variant="hero"
