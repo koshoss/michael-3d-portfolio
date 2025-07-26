@@ -16,10 +16,10 @@ const Terms = () => {
       icon: CreditCard,
       title: "Payment Terms",
       content: [
-        "50% deposit required before project commencement for all orders above $100.",
-        "Final payment due upon project completion and client approval.",
-        "Payment methods accepted: PayPal, bank transfer, and major credit cards.",
-        "Refunds are available within 48 hours of project start if no work has been completed."
+        "Only two payment methods are accepted: PayPal and Roblox wallet (Robux currency).",
+        "A 50% upfront payment is required before starting any project over $100.",
+        "The remaining payment is due upon project completion and client approval.",
+        "Refund Policy: Refunds are only applicable for orders above $100 and must be requested within 48 hours of project start if no work has been done."
       ]
     },
     {
@@ -131,9 +131,14 @@ const Terms = () => {
               If you have any questions about these terms and conditions, 
               feel free to reach out before starting your project.
             </p>
-            <button className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded-lg font-medium transition-colors">
+            <a 
+              href="https://discord.com/users/kosho_dev" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded-lg font-medium transition-colors inline-block"
+            >
               Contact Me
-            </button>
+            </a>
           </div>
         </div>
 
