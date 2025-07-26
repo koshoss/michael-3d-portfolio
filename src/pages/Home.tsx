@@ -45,9 +45,8 @@ const Home = () => {
               About Me
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Hey, I'm Michael — a 3D artist with 3 years of experience making game-ready models using Blender. 
-              I focus on creating stylized characters, weapons, props, and environments for Roblox games. 
-              I love turning ideas into clean, optimized models that look great and work well in-game.
+              I make game-ready 3D models using <strong className="text-primary">Blender</strong>, focusing on stylized characters, weapons, and props for Roblox games. 
+              I enjoy turning ideas into clean, optimized models that look great and perform well in-game.
             </p>
           </div>
         </div>
