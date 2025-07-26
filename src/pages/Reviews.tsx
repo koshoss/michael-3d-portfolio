@@ -442,7 +442,9 @@ const Reviews = () => {
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="flex items-start gap-4 mb-4">
-                <Quote className="w-8 h-8 text-primary flex-shrink-0 mt-1" />
+                <div className="bg-primary/20 rounded-lg p-3 flex-shrink-0">
+                  <div className="text-3xl font-bold text-primary">{Math.round(review.rating * 20)}</div>
+                </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
