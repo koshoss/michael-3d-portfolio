@@ -1,11 +1,10 @@
 import { useState } from "react";
 import FilterButtons from "@/components/FilterButtons";
 import ProjectCard from "@/components/ProjectCard";
-// Temporarily using placeholder URLs instead of imports
-const heroBanner = "https://via.placeholder.com/1920x1080/1a1a1a/ff8800?text=Hero+Banner";
-const projectCharacter1 = "https://via.placeholder.com/800x800/1a1a1a/ff8800?text=Character";
-const projectWeapon1 = "https://via.placeholder.com/800x800/1a1a1a/ff8800?text=Weapon";
-const projectVehicle1 = "https://via.placeholder.com/800x800/1a1a1a/ff8800?text=Vehicle";
+import portfolioHero from "@/assets/portfolio-hero.jpg";
+import projectCharacter1 from "@/assets/project-character-1.jpg";
+import projectWeapon1 from "@/assets/project-weapon-1.jpg";
+import projectVehicle1 from "@/assets/project-vehicle-1.jpg";
 
 const Portfolio = () => {
   const [activeCategory, setActiveCategory] = useState("All");
@@ -72,7 +71,7 @@ const Portfolio = () => {
       {/* Hero Section */}
       <div className="relative h-96 overflow-hidden mb-16">
         <img
-          src={heroBanner}
+          src={portfolioHero}
           alt="Portfolio Hero"
           className="w-full h-full object-cover"
         />
