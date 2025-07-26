@@ -1,28 +1,27 @@
 import { useState, useEffect } from "react";
-import { Star, Quote, Edit3, Save, X, LogIn } from "lucide-react";
+import { Star, Quote, Edit3, Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import type { User, Session } from '@supabase/supabase-js';
 
 interface Review {
   id: string;
-  username: string;
+  name: string;
   rating: number;
   review_text: string;
   created_at: string;
-  user_id: string;
+  user_identifier: string;
   isUserReview?: boolean;
 }
 
 const Reviews = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
   const [formData, setFormData] = useState({
+    name: "",
     review: "",
     rating: 0
   });
   const [errors, setErrors] = useState({
+    name: "",
     review: "",
     rating: ""
   });
@@ -30,26 +29,17 @@ const Reviews = () => {
   const [editText, setEditText] = useState("");
   const [reviews, setReviews] = useState<Review[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
+  const [userIdentifier, setUserIdentifier] = useState<string>("");
   const [loading, setLoading] = useState(false);
-  const [hasExistingReview, setHasExistingReview] = useState(false);
 
-  // Set up auth state listener
+  // Generate or get user identifier
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-      }
-    );
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
+    let identifier = localStorage.getItem('user-identifier');
+    if (!identifier) {
+      identifier = `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem('user-identifier', identifier);
+    }
+    setUserIdentifier(identifier);
   }, []);
 
   // Load reviews and projects from Supabase
@@ -67,15 +57,9 @@ const Reviews = () => {
         } else {
           const processedReviews = reviewsData.map(review => ({
             ...review,
-            isUserReview: user ? review.user_id === user.id : false
+            isUserReview: review.user_identifier === userIdentifier
           }));
           setReviews(processedReviews);
-          
-          // Check if current user already has a review
-          if (user) {
-            const existingReview = reviewsData.find(review => review.user_id === user.id);
-            setHasExistingReview(!!existingReview);
-          }
         }
 
         // Fetch projects
@@ -94,64 +78,54 @@ const Reviews = () => {
       }
     };
 
-    fetchData();
-  }, [user]);
-
-  const signInWithDiscord = async () => {
-    try {
-      const redirectUrl = `${window.location.origin}/reviews`;
-      
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'discord',
-        options: {
-          redirectTo: redirectUrl
-        }
-      });
-
-      if (error) {
-        console.error('Error signing in with Discord:', error);
-        toast({
-          title: "Error",
-          description: "Failed to sign in with Discord. Please try again.",
-          variant: "destructive"
-        });
-      }
-    } catch (error) {
-      console.error('Error signing in with Discord:', error);
-      toast({
-        title: "Error",
-        description: "Failed to sign in with Discord. Please try again.",
-        variant: "destructive"
-      });
+    if (userIdentifier) {
+      fetchData();
     }
-  };
+  }, [userIdentifier]);
 
-  const signOut = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error('Error signing out:', error);
-        toast({
-          title: "Error",
-          description: "Failed to sign out. Please try again.",
-          variant: "destructive"
-        });
-      } else {
-        toast({
-          title: "Signed out",
-          description: "You have been successfully signed out.",
-        });
-      }
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
+  // Static reviews are commented out until there are real client reviews
+  // const staticReviews = [
+  //   {
+  //     id: "static-1",
+  //     name: "Alex Thompson",
+  //     rating: 5,
+  //     review_text: "Michael delivered an absolutely stunning character model that exceeded all my expectations. The attention to detail and quality of work is professional-grade. Highly recommended!",
+  //     created_at: "2024-01-01",
+  //     user_identifier: "static",
+  //     isUserReview: false
+  //   },
+  //   {
+  //     id: "static-2",
+  //     name: "Sarah Chen",
+  //     rating: 5,
+  //     review_text: "Incredible work on my futuristic vehicle design. Michael understood my vision perfectly and brought it to life with amazing texturing and lighting. Fast delivery too!",
+  //     created_at: "2024-01-02",
+  //     user_identifier: "static",
+  //     isUserReview: false
+  //   },
+  //   {
+  //     id: "static-3",
+  //     name: "Jordan Lee",
+  //     rating: 5,
+  //     review_text: "Michael created a full set of medieval weapons for my game project. Each piece was meticulously crafted with realistic textures. Professional communication throughout the process.",
+  //     created_at: "2024-01-03",
+  //     user_identifier: "static",
+  //     isUserReview: false
+  //   }
+  // ];
 
   const validateForm = () => {
     const newErrors = {
+      name: "",
       review: "",
       rating: ""
     };
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = "Name must be at least 2 characters";
+    }
 
     if (!formData.review.trim()) {
       newErrors.review = "Review is required";
@@ -163,22 +137,21 @@ const Reviews = () => {
       newErrors.rating = "Please select a star rating";
     }
 
+    // Check if user has already submitted a review
+    const existingReview = reviews.find(
+      review => review.user_identifier === userIdentifier
+    );
+    if (existingReview) {
+      newErrors.name = "You have already submitted a review. You can edit your existing review below.";
+    }
+
     setErrors(newErrors);
-    return !newErrors.review && !newErrors.rating;
+    return !newErrors.name && !newErrors.review && !newErrors.rating;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user) {
-      toast({
-        title: "Authentication required",
-        description: "Please sign in with Discord to submit a review.",
-        variant: "destructive"
-      });
-      return;
-    }
-
     if (!validateForm()) {
       return;
     }
@@ -186,19 +159,12 @@ const Reviews = () => {
     setLoading(true);
 
     try {
-      // Get Discord username from user metadata
-      const username = user.user_metadata?.full_name || 
-                      user.user_metadata?.name || 
-                      user.user_metadata?.user_name || 
-                      user.email?.split('@')[0] || 
-                      'Discord User';
-
       const { data, error } = await supabase
         .from('reviews')
         .insert([
           {
-            user_id: user.id,
-            username: username,
+            user_identifier: userIdentifier,
+            name: formData.name.trim(),
             rating: formData.rating,
             review_text: formData.review.trim()
           }
@@ -208,19 +174,11 @@ const Reviews = () => {
 
       if (error) {
         console.error('Error submitting review:', error);
-        if (error.code === '23505') { // Unique constraint violation
-          toast({
-            title: "Review already exists",
-            description: "You have already submitted a review. You can edit your existing review below.",
-            variant: "destructive"
-          });
-        } else {
-          toast({
-            title: "Error",
-            description: "Failed to submit review. Please try again.",
-            variant: "destructive"
-          });
-        }
+        toast({
+          title: "Error",
+          description: "Failed to submit review. Please try again.",
+          variant: "destructive"
+        });
         return;
       }
 
@@ -230,9 +188,8 @@ const Reviews = () => {
       };
 
       setReviews(prev => [newReview, ...prev]);
-      setFormData({ review: "", rating: 0 });
-      setErrors({ review: "", rating: "" });
-      setHasExistingReview(true);
+      setFormData({ name: "", review: "", rating: 0 });
+      setErrors({ name: "", review: "", rating: "" });
 
       toast({
         title: "Review submitted!",
@@ -250,7 +207,7 @@ const Reviews = () => {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -300,7 +257,7 @@ const Reviews = () => {
         .from('reviews')
         .update({ review_text: editText.trim() })
         .eq('id', reviewId)
-        .eq('user_id', user?.id);
+        .eq('user_identifier', userIdentifier);
 
       if (error) {
         console.error('Error updating review:', error);
@@ -368,7 +325,7 @@ const Reviews = () => {
   };
 
   // Calculate real statistics from database
-  const allReviews = reviews;
+  const allReviews = reviews; // Only use real reviews from database
   const averageRating = allReviews.length > 0 
     ? (allReviews.reduce((sum, review) => sum + review.rating, 0) / allReviews.length).toFixed(1)
     : "5.0";
@@ -418,114 +375,85 @@ const Reviews = () => {
           ))}
         </div>
 
-        {/* Authentication and Review Form */}
+        {/* Leave a Review Form */}
         <div className="max-w-2xl mx-auto mb-16">
           <div className="bg-card rounded-lg p-8 shadow-card hover:shadow-glow transition-all duration-300">
             <h2 className="text-3xl font-bold text-foreground mb-6 text-center flex items-center justify-center gap-3">
               <Star className="text-primary" />
               Leave a Review
             </h2>
+            <p className="text-muted-foreground text-center mb-8">
+              Share your experience working with Michael and help others discover quality 3D modeling services.
+            </p>
             
-            {!user ? (
-              // Not authenticated - show Discord login
-              <div className="text-center">
-                <p className="text-muted-foreground mb-6">
-                  Sign in with Discord to share your experience and help others discover quality 3D modeling services.
-                </p>
-                <Button
-                  onClick={signInWithDiscord}
-                  className="bg-[#5865F2] hover:bg-[#4752C4] text-white font-semibold py-3 px-8 rounded-lg shadow-deep hover:shadow-glow transition-all duration-300 hover:scale-[1.02] flex items-center gap-3 mx-auto"
-                >
-                  <LogIn className="w-5 h-5" />
-                  Sign in with Discord
-                </Button>
-              </div>
-            ) : hasExistingReview ? (
-              // User has already submitted a review
-              <div className="text-center">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <p className="text-muted-foreground mb-2">
-                      Welcome back, <span className="text-primary font-semibold">{user.user_metadata?.full_name || user.email}</span>!
-                    </p>
-                    <p className="text-muted-foreground text-sm">
-                      You have already submitted a review. You can edit it below.
-                    </p>
-                  </div>
-                  <Button
-                    onClick={signOut}
-                    variant="outline"
-                    size="sm"
-                  >
-                    Sign Out
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              // Authenticated and can submit review
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <div className="flex items-center justify-between mb-6">
-                  <p className="text-muted-foreground">
-                    Welcome, <span className="text-primary font-semibold">{user.user_metadata?.full_name || user.email}</span>!
-                  </p>
-                  <Button
-                    onClick={signOut}
-                    variant="outline"
-                    size="sm"
-                  >
-                    Sign Out
-                  </Button>
-                </div>
-                
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-3">
-                      Rating *
-                    </label>
-                    <div className="flex items-center gap-2 mb-2">
-                      {renderStars(formData.rating, !loading, handleStarClick)}
-                      {formData.rating > 0 && (
-                        <span className="text-sm text-muted-foreground ml-2">
-                          ({formData.rating} star{formData.rating !== 1 ? 's' : ''})
-                        </span>
-                      )}
-                    </div>
-                    {errors.rating && (
-                      <p className="text-destructive text-sm mt-1">{errors.rating}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label htmlFor="review" className="block text-sm font-medium text-foreground mb-2">
-                      Your Review *
-                    </label>
-                    <textarea
-                      id="review"
-                      name="review"
-                      value={formData.review}
-                      onChange={handleInputChange}
-                      disabled={loading}
-                      rows={5}
-                      className={`w-full px-4 py-3 bg-secondary border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none ${
-                        errors.review ? 'border-destructive' : 'border-border hover:border-primary/50'
-                      } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      placeholder="Tell others about your experience working with Michael..."
-                    />
-                    {errors.review && (
-                      <p className="text-destructive text-sm mt-1">{errors.review}</p>
-                    )}
-                  </div>
-
-                  <Button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 rounded-lg shadow-deep hover:shadow-glow transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                  >
-                    {loading ? "Submitting..." : "Submit Review"}
-                  </Button>
-                </form>
+                <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
+                  Your Name *
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  className={`w-full px-4 py-3 bg-secondary border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 ${
+                    errors.name ? 'border-destructive' : 'border-border hover:border-primary/50'
+                  } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  placeholder="Enter your name"
+                />
+                {errors.name && (
+                  <p className="text-destructive text-sm mt-1">{errors.name}</p>
+                )}
               </div>
-            )}
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-3">
+                  Rating *
+                </label>
+                <div className="flex items-center gap-2 mb-2">
+                  {renderStars(formData.rating, !loading, handleStarClick)}
+                  {formData.rating > 0 && (
+                    <span className="text-sm text-muted-foreground ml-2">
+                      ({formData.rating} star{formData.rating !== 1 ? 's' : ''})
+                    </span>
+                  )}
+                </div>
+                {errors.rating && (
+                  <p className="text-destructive text-sm mt-1">{errors.rating}</p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="review" className="block text-sm font-medium text-foreground mb-2">
+                  Your Review *
+                </label>
+                <textarea
+                  id="review"
+                  name="review"
+                  value={formData.review}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  rows={5}
+                  className={`w-full px-4 py-3 bg-secondary border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none ${
+                    errors.review ? 'border-destructive' : 'border-border hover:border-primary/50'
+                  } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  placeholder="Tell others about your experience working with Michael..."
+                />
+                {errors.review && (
+                  <p className="text-destructive text-sm mt-1">{errors.review}</p>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 rounded-lg shadow-deep hover:shadow-glow transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                {loading ? "Submitting..." : "Submit Review"}
+              </Button>
+            </form>
           </div>
         </div>
 
@@ -546,7 +474,7 @@ const Reviews = () => {
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
-                      <h3 className="font-semibold text-foreground">{review.username}</h3>
+                      <h3 className="font-semibold text-foreground">{review.name}</h3>
                       {review.isUserReview && (
                         <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
                           Your Review
