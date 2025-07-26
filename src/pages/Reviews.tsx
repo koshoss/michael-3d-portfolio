@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { Star, Quote } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Star, Quote, Edit3, Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 interface Review {
   id: number;
@@ -10,20 +10,38 @@ interface Review {
   rating: number;
   review: string;
   date: string;
+  isUserReview?: boolean;
 }
 
 const Reviews = () => {
-  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
-    review: ""
+    review: "",
+    rating: 0
   });
   const [errors, setErrors] = useState({
     name: "",
-    review: ""
+    review: "",
+    rating: ""
   });
+  const [editingReview, setEditingReview] = useState<number | null>(null);
+  const [editText, setEditText] = useState("");
+  const [userReviews, setUserReviews] = useState<Review[]>([]);
 
-  const [staticReviews] = useState<Review[]>([
+  // Load reviews from localStorage on component mount
+  useEffect(() => {
+    const savedReviews = localStorage.getItem('portfolio-reviews');
+    if (savedReviews) {
+      setUserReviews(JSON.parse(savedReviews));
+    }
+  }, []);
+
+  // Save reviews to localStorage whenever userReviews changes
+  useEffect(() => {
+    localStorage.setItem('portfolio-reviews', JSON.stringify(userReviews));
+  }, [userReviews]);
+
+  const staticReviews: Review[] = [
     {
       id: 1,
       name: "Alex Thompson",
@@ -72,14 +90,13 @@ const Reviews = () => {
       review: "Not only did Michael create an amazing character model, but the rigging was flawless. The character animates beautifully and was ready for production immediately.",
       date: "4 months ago"
     }
-  ]);
-
-  const [userReviews, setUserReviews] = useState<Review[]>([]);
+  ];
 
   const validateForm = () => {
     const newErrors = {
       name: "",
-      review: ""
+      review: "",
+      rating: ""
     };
 
     if (!formData.name.trim()) {
@@ -94,8 +111,20 @@ const Reviews = () => {
       newErrors.review = "Review must be at least 10 characters";
     }
 
+    if (formData.rating === 0) {
+      newErrors.rating = "Please select a star rating";
+    }
+
+    // Check if user has already submitted a review
+    const existingReview = userReviews.find(
+      review => review.name.toLowerCase() === formData.name.trim().toLowerCase()
+    );
+    if (existingReview) {
+      newErrors.name = "You have already submitted a review. You can edit your existing review below.";
+    }
+
     setErrors(newErrors);
-    return !newErrors.name && !newErrors.review;
+    return !newErrors.name && !newErrors.review && !newErrors.rating;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -108,20 +137,20 @@ const Reviews = () => {
     const newReview: Review = {
       id: Date.now(),
       name: formData.name.trim(),
-      project: "General Review",
-      rating: 5,
+      project: "Portfolio Review",
+      rating: formData.rating,
       review: formData.review.trim(),
-      date: "Just now"
+      date: "Just now",
+      isUserReview: true
     };
 
     setUserReviews(prev => [newReview, ...prev]);
-    setFormData({ name: "", review: "" });
-    setErrors({ name: "", review: "" });
+    setFormData({ name: "", review: "", rating: 0 });
+    setErrors({ name: "", review: "", rating: "" });
 
     toast({
       title: "Review submitted!",
       description: "Thank you for your feedback. Your review has been added.",
-      variant: "default"
     });
   };
 
@@ -141,6 +170,66 @@ const Reviews = () => {
     }
   };
 
+  const handleStarClick = (rating: number) => {
+    setFormData(prev => ({ ...prev, rating }));
+    if (errors.rating) {
+      setErrors(prev => ({ ...prev, rating: "" }));
+    }
+  };
+
+  const startEdit = (review: Review) => {
+    setEditingReview(review.id);
+    setEditText(review.review);
+  };
+
+  const cancelEdit = () => {
+    setEditingReview(null);
+    setEditText("");
+  };
+
+  const saveEdit = (reviewId: number) => {
+    if (editText.trim().length < 10) {
+      toast({
+        title: "Error",
+        description: "Review must be at least 10 characters long.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setUserReviews(prev => 
+      prev.map(review => 
+        review.id === reviewId 
+          ? { ...review, review: editText.trim(), date: "Edited just now" }
+          : review
+      )
+    );
+    
+    setEditingReview(null);
+    setEditText("");
+    
+    toast({
+      title: "Review updated!",
+      description: "Your review has been successfully updated.",
+    });
+  };
+
+  const renderStars = (rating: number, interactive: boolean = false, onStarClick?: (rating: number) => void) => {
+    return Array.from({ length: 5 }, (_, i) => (
+      <Star
+        key={i}
+        className={`w-5 h-5 transition-all duration-200 ${
+          i < rating 
+            ? "text-primary fill-current" 
+            : interactive 
+              ? "text-muted-foreground hover:text-primary cursor-pointer"
+              : "text-muted-foreground"
+        } ${interactive ? "hover:scale-110" : ""}`}
+        onClick={interactive && onStarClick ? () => onStarClick(i + 1) : undefined}
+      />
+    ));
+  };
+
   const allReviews = [...userReviews, ...staticReviews];
 
   const stats = [
@@ -149,17 +238,6 @@ const Reviews = () => {
     { label: "Average Rating", value: "4.9/5" },
     { label: "On-Time Delivery", value: "100%" }
   ];
-
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <Star
-        key={i}
-        className={`w-5 h-5 ${
-          i < rating ? "text-yellow-400 fill-current" : "text-gray-300"
-        }`}
-      />
-    ));
-  };
 
   return (
     <div className="min-h-screen bg-background pt-24">
@@ -220,6 +298,23 @@ const Reviews = () => {
               </div>
 
               <div>
+                <label className="block text-sm font-medium text-foreground mb-3">
+                  Rating *
+                </label>
+                <div className="flex items-center gap-2 mb-2">
+                  {renderStars(formData.rating, true, handleStarClick)}
+                  {formData.rating > 0 && (
+                    <span className="text-sm text-muted-foreground ml-2">
+                      ({formData.rating} star{formData.rating !== 1 ? 's' : ''})
+                    </span>
+                  )}
+                </div>
+                {errors.rating && (
+                  <p className="text-destructive text-sm mt-1">{errors.rating}</p>
+                )}
+              </div>
+
+              <div>
                 <label htmlFor="review" className="block text-sm font-medium text-foreground mb-2">
                   Your Review *
                 </label>
@@ -262,8 +357,25 @@ const Reviews = () => {
               <div className="flex items-start gap-4 mb-4">
                 <Quote className="w-8 h-8 text-primary flex-shrink-0 mt-1" />
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h3 className="font-semibold text-foreground">{review.name}</h3>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                      <h3 className="font-semibold text-foreground">{review.name}</h3>
+                      {review.isUserReview && (
+                        <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
+                          Your Review
+                        </span>
+                      )}
+                    </div>
+                    {review.isUserReview && editingReview !== review.id && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => startEdit(review)}
+                        className="text-muted-foreground hover:text-primary"
+                      >
+                        <Edit3 className="w-4 h-4" />
+                      </Button>
+                    )}
                   </div>
                   <div className="flex items-center gap-2 mb-2">
                     {renderStars(review.rating)}
@@ -272,9 +384,39 @@ const Reviews = () => {
                 </div>
               </div>
               
-              <p className="text-muted-foreground mb-4 leading-relaxed">
-                "{review.review}"
-              </p>
+              {editingReview === review.id ? (
+                <div className="space-y-4">
+                  <textarea
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                    className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none"
+                    rows={4}
+                    placeholder="Edit your review..."
+                  />
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => saveEdit(review.id)}
+                      size="sm"
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                    >
+                      <Save className="w-4 h-4 mr-1" />
+                      Save
+                    </Button>
+                    <Button
+                      onClick={cancelEdit}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <X className="w-4 h-4 mr-1" />
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-muted-foreground mb-4 leading-relaxed">
+                  "{review.review}"
+                </p>
+              )}
               
               <div className="text-sm text-muted-foreground">
                 {review.date}
@@ -293,12 +435,12 @@ const Reviews = () => {
               Let's discuss your project and bring your 3D vision to life with the same quality and attention to detail.
             </p>
             <div className="flex gap-4 justify-center">
-              <button className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded-lg font-medium transition-colors">
+              <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
                 Start Your Project
-              </button>
-              <button className="border border-border hover:bg-accent hover:text-accent-foreground px-6 py-3 rounded-lg font-medium transition-colors">
+              </Button>
+              <Button variant="outline">
                 View Portfolio
-              </button>
+              </Button>
             </div>
           </div>
         </div>
