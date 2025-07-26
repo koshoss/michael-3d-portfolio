@@ -1,7 +1,29 @@
+import { useState } from "react";
 import { Star, Quote } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+
+interface Review {
+  id: number;
+  name: string;
+  project: string;
+  rating: number;
+  review: string;
+  date: string;
+}
 
 const Reviews = () => {
-  const reviews = [
+  const { toast } = useToast();
+  const [formData, setFormData] = useState({
+    name: "",
+    review: ""
+  });
+  const [errors, setErrors] = useState({
+    name: "",
+    review: ""
+  });
+
+  const [staticReviews] = useState<Review[]>([
     {
       id: 1,
       name: "Alex Thompson",
@@ -50,7 +72,76 @@ const Reviews = () => {
       review: "Not only did Michael create an amazing character model, but the rigging was flawless. The character animates beautifully and was ready for production immediately.",
       date: "4 months ago"
     }
-  ];
+  ]);
+
+  const [userReviews, setUserReviews] = useState<Review[]>([]);
+
+  const validateForm = () => {
+    const newErrors = {
+      name: "",
+      review: ""
+    };
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = "Name must be at least 2 characters";
+    }
+
+    if (!formData.review.trim()) {
+      newErrors.review = "Review is required";
+    } else if (formData.review.trim().length < 10) {
+      newErrors.review = "Review must be at least 10 characters";
+    }
+
+    setErrors(newErrors);
+    return !newErrors.name && !newErrors.review;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    const newReview: Review = {
+      id: Date.now(),
+      name: formData.name.trim(),
+      project: "General Review",
+      rating: 5,
+      review: formData.review.trim(),
+      date: "Just now"
+    };
+
+    setUserReviews(prev => [newReview, ...prev]);
+    setFormData({ name: "", review: "" });
+    setErrors({ name: "", review: "" });
+
+    toast({
+      title: "Review submitted!",
+      description: "Thank you for your feedback. Your review has been added.",
+      variant: "default"
+    });
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear error when user starts typing
+    if (errors[name as keyof typeof errors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ""
+      }));
+    }
+  };
+
+  const allReviews = [...userReviews, ...staticReviews];
 
   const stats = [
     { label: "Total Projects", value: "150+" },
@@ -96,12 +187,76 @@ const Reviews = () => {
           ))}
         </div>
 
+        {/* Leave a Review Form */}
+        <div className="max-w-2xl mx-auto mb-16">
+          <div className="bg-card rounded-lg p-8 shadow-card hover:shadow-glow transition-all duration-300">
+            <h2 className="text-3xl font-bold text-foreground mb-6 text-center flex items-center justify-center gap-3">
+              <Star className="text-primary" />
+              Leave a Review
+            </h2>
+            <p className="text-muted-foreground text-center mb-8">
+              Share your experience working with Michael and help others discover quality 3D modeling services.
+            </p>
+            
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
+                  Your Name *
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-3 bg-secondary border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 ${
+                    errors.name ? 'border-destructive' : 'border-border hover:border-primary/50'
+                  }`}
+                  placeholder="Enter your name"
+                />
+                {errors.name && (
+                  <p className="text-destructive text-sm mt-1">{errors.name}</p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="review" className="block text-sm font-medium text-foreground mb-2">
+                  Your Review *
+                </label>
+                <textarea
+                  id="review"
+                  name="review"
+                  value={formData.review}
+                  onChange={handleInputChange}
+                  rows={5}
+                  className={`w-full px-4 py-3 bg-secondary border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none ${
+                    errors.review ? 'border-destructive' : 'border-border hover:border-primary/50'
+                  }`}
+                  placeholder="Tell others about your experience working with Michael..."
+                />
+                {errors.review && (
+                  <p className="text-destructive text-sm mt-1">{errors.review}</p>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 rounded-lg shadow-deep hover:shadow-glow transition-all duration-300 hover:scale-[1.02]"
+              >
+                Submit Review
+              </Button>
+            </form>
+          </div>
+        </div>
+
         {/* Reviews Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {reviews.map((review, index) => (
+          {allReviews.map((review, index) => (
             <div
               key={review.id}
-              className="bg-card rounded-lg p-6 shadow-card hover:shadow-glow transition-all duration-300 animate-fade-in"
+              className={`bg-card rounded-lg p-6 shadow-card hover:shadow-glow transition-all duration-300 animate-fade-in ${
+                userReviews.some(ur => ur.id === review.id) ? 'ring-2 ring-primary/50 bg-card/80' : ''
+              }`}
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="flex items-start gap-4 mb-4">
