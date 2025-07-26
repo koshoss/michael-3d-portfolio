@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Palette, Wrench, Zap } from "lucide-react";
 
 const Home = () => {
+  console.log('Home.tsx: Home component rendering...');
   const navigate = useNavigate();
 
   const modelingTools = [
@@ -17,7 +18,7 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-hero pt-24">
+    <div className="min-h-screen bg-background pt-24">
       <div className="container mx-auto px-4 py-12">
         {/* Hero Section */}
         <div className="text-center mb-16 animate-fade-in">

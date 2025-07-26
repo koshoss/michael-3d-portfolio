@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { Home, FolderOpen, DollarSign, Star, FileText } from "lucide-react";
 
 const Navigation = () => {
+  console.log('Navigation.tsx: Navigation component rendering...');
   const navItems = [
     { name: "Home", path: "/", icon: Home },
     { name: "Portfolio", path: "/portfolio", icon: FolderOpen, isMain: true },
