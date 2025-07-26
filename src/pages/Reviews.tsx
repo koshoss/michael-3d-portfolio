@@ -71,35 +71,36 @@ const Reviews = () => {
     }
   }, [userIdentifier]);
 
-  const staticReviews = [
-    {
-      id: "static-1",
-      name: "Alex Thompson",
-      rating: 5,
-      review_text: "Michael delivered an absolutely stunning character model that exceeded all my expectations. The attention to detail and quality of work is professional-grade. Highly recommended!",
-      created_at: "2024-01-01",
-      user_identifier: "static",
-      isUserReview: false
-    },
-    {
-      id: "static-2",
-      name: "Sarah Chen",
-      rating: 5,
-      review_text: "Incredible work on my futuristic vehicle design. Michael understood my vision perfectly and brought it to life with amazing texturing and lighting. Fast delivery too!",
-      created_at: "2024-01-02",
-      user_identifier: "static",
-      isUserReview: false
-    },
-    {
-      id: "static-3",
-      name: "Jordan Lee",
-      rating: 5,
-      review_text: "Michael created a full set of medieval weapons for my game project. Each piece was meticulously crafted with realistic textures. Professional communication throughout the process.",
-      created_at: "2024-01-03",
-      user_identifier: "static",
-      isUserReview: false
-    }
-  ];
+  // Static reviews are commented out until there are real client reviews
+  // const staticReviews = [
+  //   {
+  //     id: "static-1",
+  //     name: "Alex Thompson",
+  //     rating: 5,
+  //     review_text: "Michael delivered an absolutely stunning character model that exceeded all my expectations. The attention to detail and quality of work is professional-grade. Highly recommended!",
+  //     created_at: "2024-01-01",
+  //     user_identifier: "static",
+  //     isUserReview: false
+  //   },
+  //   {
+  //     id: "static-2",
+  //     name: "Sarah Chen",
+  //     rating: 5,
+  //     review_text: "Incredible work on my futuristic vehicle design. Michael understood my vision perfectly and brought it to life with amazing texturing and lighting. Fast delivery too!",
+  //     created_at: "2024-01-02",
+  //     user_identifier: "static",
+  //     isUserReview: false
+  //   },
+  //   {
+  //     id: "static-3",
+  //     name: "Jordan Lee",
+  //     rating: 5,
+  //     review_text: "Michael created a full set of medieval weapons for my game project. Each piece was meticulously crafted with realistic textures. Professional communication throughout the process.",
+  //     created_at: "2024-01-03",
+  //     user_identifier: "static",
+  //     isUserReview: false
+  //   }
+  // ];
 
   const validateForm = () => {
     const newErrors = {
@@ -311,7 +312,7 @@ const Reviews = () => {
     return `${Math.floor(diffInDays / 30)} months ago`;
   };
 
-  const allReviews = [...reviews, ...staticReviews];
+  const allReviews = reviews; // Only use real reviews from database
   const averageRating = allReviews.length > 0 
     ? (allReviews.reduce((sum, review) => sum + review.rating, 0) / allReviews.length).toFixed(1)
     : "5.0";
