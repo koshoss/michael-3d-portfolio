@@ -6,41 +6,41 @@
 
 @layer base {
   :root {
-    /* Dark professional theme */
-    --background: 220 27% 8%;
-    --foreground: 210 40% 98%;
+    /* Warm dark theme with orange accents */
+    --background: 20 15% 5%;
+    --foreground: 45 100% 90%;
 
-    --card: 220 27% 10%;
-    --card-foreground: 210 40% 98%;
+    --card: 20 15% 8%;
+    --card-foreground: 45 100% 90%;
 
-    --popover: 220 27% 10%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 20 15% 8%;
+    --popover-foreground: 45 100% 90%;
 
-    /* Electric blue accent for tech/3D feel */
-    --primary: 193 100% 50%;
-    --primary-foreground: 220 27% 8%;
+    /* Warm orange accent for creative feel */
+    --primary: 30 100% 50%;
+    --primary-foreground: 20 15% 5%;
 
-    --secondary: 220 27% 15%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 25 25% 15%;
+    --secondary-foreground: 45 100% 90%;
 
-    --muted: 220 27% 12%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 25 20% 12%;
+    --muted-foreground: 35 15% 65%;
 
-    --accent: 193 100% 60%;
-    --accent-foreground: 220 27% 8%;
+    --accent: 35 100% 60%;
+    --accent-foreground: 20 15% 5%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 45 100% 90%;
 
-    --border: 220 27% 20%;
-    --input: 220 27% 15%;
-    --ring: 193 100% 50%;
+    --border: 25 20% 20%;
+    --input: 25 20% 15%;
+    --ring: 30 100% 50%;
 
-    /* Portfolio specific tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(193 100% 50%), hsl(193 100% 60%));
-    --gradient-hero: linear-gradient(135deg, hsl(220 27% 8%), hsl(220 27% 12%));
-    --glow-primary: 0 0 30px hsl(193 100% 50% / 0.3);
-    --shadow-card: 0 8px 32px hsl(220 27% 5% / 0.5);
+    /* Portfolio specific tokens with warm colors */
+    --gradient-primary: linear-gradient(135deg, hsl(30 100% 50%), hsl(35 100% 60%));
+    --gradient-hero: linear-gradient(135deg, hsl(20 15% 5%), hsl(25 20% 12%));
+    --glow-primary: 0 0 30px hsl(30 100% 50% / 0.3);
+    --shadow-card: 0 8px 32px hsl(20 15% 3% / 0.5);
 
     --radius: 0.75rem;
 
