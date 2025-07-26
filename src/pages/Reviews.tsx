@@ -8,35 +8,11 @@ const Reviews = () => {
   const [session, setSession] = useState(null);
 
   useEffect(() => {
-    // أولاً: نحاول نشوف لو في توكنات في الرابط
-    const hash = window.location.hash;
-
-    if (hash.includes("access_token")) {
-      const params = new URLSearchParams(hash.replace("#", "?"));
-
-      const access_token = params.get("access_token");
-      const refresh_token = params.get("refresh_token");
-
-      // تسجيل الجلسة في supabase
-      supabase.auth.setSession({
-        access_token,
-        refresh_token,
-      }).then(({ data, error }) => {
-        if (error) {
-          console.error("Failed to set session:", error.message);
-        } else {
-          setSession(data.session);
-        }
-        // نظف الرابط من التوكنات
-        navigate("/reviews", { replace: true });
-      });
-    } else {
-      // لو مفيش توكنات، نشيك هل في جلسة حالياً؟
-      supabase.auth.getSession().then(({ data }) => {
-        setSession(data.session);
-        setLoading(false);
-      });
-    }
+    // التحقق من وجود جلسة حالية
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setLoading(false);
+    });
   }, []);
 
   if (loading) {
@@ -53,7 +29,7 @@ const Reviews = () => {
             supabase.auth.signInWithOAuth({
               provider: "discord",
               options: {
-                redirectTo: `${window.location.origin}/reviews`,
+                redirectTo: `${window.location.origin}/oauth-redirect`, // ✅ إعادة التوجيه هنا
               },
             })
           }
