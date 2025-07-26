@@ -6,41 +6,49 @@
 
 @layer base {
   :root {
-    /* Darker warm theme with orange accents */
+    /* Enhanced dark theme with improved orange contrast */
     --background: 20 25% 3%;
-    --foreground: 45 80% 85%;
+    --foreground: 45 80% 88%;
 
     --card: 20 25% 5%;
-    --card-foreground: 45 80% 85%;
+    --card-foreground: 45 80% 88%;
 
     --popover: 20 25% 5%;
-    --popover-foreground: 45 80% 85%;
+    --popover-foreground: 45 80% 88%;
 
-    /* Darker warm orange accent */
-    --primary: 30 90% 45%;
+    /* Deeper orange with better contrast */
+    --primary: 28 95% 55%;
     --primary-foreground: 20 25% 3%;
+    --primary-shadow: 28 95% 35%;
 
     --secondary: 25 30% 10%;
-    --secondary-foreground: 45 80% 85%;
+    --secondary-foreground: 45 80% 88%;
+    --secondary-hover: 25 35% 14%;
 
     --muted: 25 25% 8%;
-    --muted-foreground: 35 20% 55%;
+    --muted-foreground: 35 25% 65%;
 
-    --accent: 35 85% 50%;
+    --accent: 35 90% 55%;
     --accent-foreground: 20 25% 3%;
 
+    /* Link colors for better accessibility */
+    --link: 200 90% 70%;
+    --link-hover: 200 90% 80%;
+
     --destructive: 0 84% 60%;
-    --destructive-foreground: 45 80% 85%;
+    --destructive-foreground: 45 80% 88%;
 
     --border: 25 25% 15%;
     --input: 25 25% 10%;
-    --ring: 30 90% 45%;
+    --ring: 28 95% 55%;
 
-    /* Portfolio specific tokens with darker warm colors */
-    --gradient-primary: linear-gradient(135deg, hsl(30 90% 45%), hsl(35 85% 50%));
+    /* Enhanced portfolio tokens with deeper shadows */
+    --gradient-primary: linear-gradient(135deg, hsl(28 95% 55%), hsl(32 90% 60%));
     --gradient-hero: linear-gradient(135deg, hsl(20 25% 3%), hsl(25 25% 8%));
-    --glow-primary: 0 0 30px hsl(30 90% 45% / 0.3);
-    --shadow-card: 0 8px 32px hsl(20 25% 1% / 0.6);
+    --glow-primary: 0 0 30px hsl(28 95% 55% / 0.4);
+    --shadow-card: 0 8px 32px hsl(20 25% 1% / 0.7);
+    --shadow-deep: 0 4px 20px hsl(28 95% 35% / 0.3);
+    --text-shadow: 0 2px 8px hsl(28 95% 35% / 0.5);
 
     --radius: 0.75rem;
 

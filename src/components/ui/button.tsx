@@ -17,10 +17,10 @@ const buttonVariants = cva(
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        hero: "bg-gradient-primary text-primary-foreground hover:scale-105 hover:shadow-glow font-semibold",
-        nav: "bg-secondary/50 text-foreground hover:bg-secondary hover:text-primary transition-all duration-300",
-        portfolio: "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-glow font-semibold text-lg",
+        link: "text-link hover:text-link-hover underline underline-offset-4 transition-colors duration-200",
+        hero: "bg-gradient-primary text-primary-foreground hover:scale-105 hover:shadow-glow font-semibold shadow-deep",
+        nav: "bg-secondary/50 text-foreground hover:bg-secondary-hover hover:text-primary transition-all duration-300",
+        portfolio: "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-glow font-semibold text-lg shadow-deep",
       },
       size: {
         default: "h-10 px-4 py-2",

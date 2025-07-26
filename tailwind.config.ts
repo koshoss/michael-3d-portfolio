@@ -68,14 +68,46 @@ export default {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
 			},
-			backgroundImage: {
-				'gradient-primary': 'var(--gradient-primary)',
-				'gradient-hero': 'var(--gradient-hero)'
-			},
-			boxShadow: {
-				'glow': 'var(--glow-primary)',
-				'card': 'var(--shadow-card)'
-			},
+			colors: {
+				border: 'hsl(var(--border))',
+				input: 'hsl(var(--input))',
+				ring: 'hsl(var(--ring))',
+				background: 'hsl(var(--background))',
+				foreground: 'hsl(var(--foreground))',
+				primary: {
+					DEFAULT: 'hsl(var(--primary))',
+					foreground: 'hsl(var(--primary-foreground))',
+					shadow: 'hsl(var(--primary-shadow))'
+				},
+				secondary: {
+					DEFAULT: 'hsl(var(--secondary))',
+					foreground: 'hsl(var(--secondary-foreground))',
+					hover: 'hsl(var(--secondary-hover))'
+				},
+				destructive: {
+					DEFAULT: 'hsl(var(--destructive))',
+					foreground: 'hsl(var(--destructive-foreground))'
+				},
+				muted: {
+					DEFAULT: 'hsl(var(--muted))',
+					foreground: 'hsl(var(--muted-foreground))'
+				},
+				accent: {
+					DEFAULT: 'hsl(var(--accent))',
+					foreground: 'hsl(var(--accent-foreground))'
+				},
+				popover: {
+					DEFAULT: 'hsl(var(--popover))',
+					foreground: 'hsl(var(--popover-foreground))'
+				},
+				card: {
+					DEFAULT: 'hsl(var(--card))',
+					foreground: 'hsl(var(--card-foreground))'
+				},
+				link: {
+					DEFAULT: 'hsl(var(--link))',
+					hover: 'hsl(var(--link-hover))'
+				},
 			keyframes: {
 				'accordion-down': {
 					from: {
@@ -105,10 +137,20 @@ export default {
 				},
 				'glow-pulse': {
 					'0%, 100%': {
-						boxShadow: '0 0 20px hsl(30 90% 45% / 0.2)'
+						boxShadow: '0 0 20px hsl(28 95% 55% / 0.2)'
 					},
 					'50%': {
-						boxShadow: '0 0 40px hsl(30 90% 45% / 0.4)'
+						boxShadow: '0 0 40px hsl(28 95% 55% / 0.4)'
+					}
+				},
+				'tool-hover': {
+					'0%': {
+						transform: 'translateX(0) scale(1)',
+						backgroundColor: 'hsl(var(--secondary))'
+					},
+					'100%': {
+						transform: 'translateX(4px) scale(1.02)',
+						backgroundColor: 'hsl(var(--secondary-hover))'
 					}
 				}
 			},
@@ -116,7 +158,8 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.6s ease-out',
-				'glow-pulse': 'glow-pulse 2s ease-in-out infinite'
+				'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
+				'tool-hover': 'tool-hover 0.3s ease-out forwards'
 			}
 		}
 	},

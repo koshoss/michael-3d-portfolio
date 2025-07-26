@@ -22,7 +22,7 @@ const Home = () => {
         {/* Hero Section */}
         <div className="text-center mb-16 animate-fade-in">
           <h1 className="text-6xl font-bold text-foreground mb-6">
-            Hi, I'm <span className="text-primary">Michael</span>
+            Hi, I'm <span className="text-primary drop-shadow-lg" style={{textShadow: 'var(--text-shadow)'}}>Michael</span>
           </h1>
           <p className="text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
             I'm 19 years old with 3 years of experience in 3D modeling
@@ -44,8 +44,8 @@ const Home = () => {
               <Zap className="text-primary" />
               About Me
             </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              I make game-ready 3D models using <strong className="text-primary">Blender</strong>, focusing on stylized characters, weapons, and props for Roblox games. 
+            <p className="text-xl text-muted-foreground leading-relaxed tracking-wide" style={{lineHeight: '1.8'}}>
+              I make game-ready 3D models using <strong className="text-primary font-semibold">Blender</strong>, focusing on stylized characters, weapons, and props for Roblox games. 
               I enjoy turning ideas into clean, optimized models that look great and perform well in-game.
             </p>
           </div>
@@ -60,13 +60,15 @@ const Home = () => {
               Modeling Tools
             </h3>
             <div className="space-y-4">
-              {modelingTools.map((tool) => (
+              {modelingTools.map((tool, index) => (
                 <div
                   key={tool.name}
-                  className="flex items-center gap-4 p-4 bg-secondary rounded-lg hover:bg-secondary/80 transition-colors"
+                  className={`flex items-center gap-4 p-4 bg-secondary rounded-lg hover:bg-secondary-hover hover:translate-x-1 hover:scale-[1.02] transition-all duration-300 cursor-pointer group ${
+                    index % 2 === 1 ? 'bg-secondary/80' : ''
+                  }`}
                 >
-                  <span className="text-2xl">{tool.icon}</span>
-                  <span className="text-lg font-medium text-foreground">{tool.name}</span>
+                  <span className="text-2xl group-hover:scale-110 transition-transform duration-200">{tool.icon}</span>
+                  <span className="text-lg font-medium text-foreground group-hover:text-primary transition-colors duration-200">{tool.name}</span>
                 </div>
               ))}
             </div>
@@ -79,13 +81,15 @@ const Home = () => {
               Texturing Tools
             </h3>
             <div className="space-y-4">
-              {texturingTools.map((tool) => (
+              {texturingTools.map((tool, index) => (
                 <div
                   key={tool.name}
-                  className="flex items-center gap-4 p-4 bg-secondary rounded-lg hover:bg-secondary/80 transition-colors"
+                  className={`flex items-center gap-4 p-4 bg-secondary rounded-lg hover:bg-secondary-hover hover:translate-x-1 hover:scale-[1.02] transition-all duration-300 cursor-pointer group ${
+                    index % 2 === 1 ? 'bg-secondary/80' : ''
+                  }`}
                 >
-                  <span className="text-2xl">{tool.icon}</span>
-                  <span className="text-lg font-medium text-foreground">{tool.name}</span>
+                  <span className="text-2xl group-hover:scale-110 transition-transform duration-200">{tool.icon}</span>
+                  <span className="text-lg font-medium text-foreground group-hover:text-primary transition-colors duration-200">{tool.name}</span>
                 </div>
               ))}
             </div>
