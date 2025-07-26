@@ -10,14 +10,14 @@ import Pricing from "./pages/Pricing";
 import Reviews from "./pages/Reviews";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
-import HandleOAuthRedirect from "./pages/HandleOAuthRedirect"; // ✅ تم إضافة هذا السطر
+import OAuthRedirect from "./pages/OAuthRedirect"; // ✅ اسم الملف الصحيح الجديد
 
 const queryClient = new QueryClient();
 
-console.log('App.tsx: QueryClient created');
+console.log("App.tsx: QueryClient created");
 
 const App = () => {
-  console.log('App.tsx: App component rendering...');
+  console.log("App.tsx: App component rendering...");
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -31,7 +31,7 @@ const App = () => {
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/reviews" element={<Reviews />} />
             <Route path="/terms" element={<Terms />} />
-            <Route path="/oauth-redirect" element={<HandleOAuthRedirect />} /> {/* ✅ تم إضافة هذا المسار */}
+            <Route path="/oauth-redirect" element={<OAuthRedirect />} /> {/* ✅ التوجيه الصحيح */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
