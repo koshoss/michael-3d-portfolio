@@ -135,13 +135,16 @@ const Reviews = () => {
     setLoading(true);
     try {
       const redirectUrl = `${window.location.origin}/reviews`;
+      console.log('Redirect URL:', redirectUrl);
       
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'discord',
         options: {
           redirectTo: redirectUrl
         }
       });
+
+      console.log('Auth response:', { data, error });
 
       if (error) {
         console.error('Discord login error:', error);
