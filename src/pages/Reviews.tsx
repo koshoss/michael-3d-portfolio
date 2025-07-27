@@ -439,7 +439,7 @@ const Reviews = () => {
                 <img 
                   src={userProfile.avatar_url || '/placeholder.svg'} 
                   alt={userProfile.username}
-                  className="w-16 h-16 rounded-full border-2 border-primary"
+                  className="w-24 h-24 rounded-full border-4 border-primary shadow-lg"
                 />
                 <div className="text-left">
                   <h1 className="text-5xl font-bold text-foreground">
@@ -570,7 +570,7 @@ const Reviews = () => {
                   <img 
                     src={review.discord_avatar_url || '/placeholder.svg'} 
                     alt={review.discord_username || review.name}
-                    className="w-12 h-12 rounded-full border-2 border-primary/30"
+                    className="w-16 h-16 rounded-full border-2 border-primary/30"
                   />
                 </div>
                 <div className="flex-1">
