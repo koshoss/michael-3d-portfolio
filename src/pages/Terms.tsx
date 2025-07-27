@@ -1,6 +1,37 @@
+import { useState, useEffect } from "react";
 import { FileText, Shield, Clock, CreditCard } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Terms = () => {
+  const [termsContent, setTermsContent] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTermsContent = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('site_content')
+          .select('content')
+          .eq('page', 'terms')
+          .eq('section', 'content')
+          .single();
+
+        if (error && error.code !== 'PGRST116') {
+          console.error('Error fetching terms content:', error);
+          return;
+        }
+
+        setTermsContent(data?.content || "Terms and Conditions content goes here...");
+      } catch (error) {
+        console.error('Error fetching terms content:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTermsContent();
+  }, []);
+
   const sections = [
     {
       icon: FileText,
@@ -62,6 +93,17 @@ const Terms = () => {
       description: "All client projects and information are kept strictly confidential. NDAs available upon request for sensitive projects."
     }
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading terms...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pt-24">
@@ -139,6 +181,20 @@ const Terms = () => {
             >
               Contact Me
             </a>
+          </div>
+        </div>
+
+        
+        {/* Custom Terms Content */}
+        <div className="mt-16 max-w-4xl mx-auto">
+          <div className="bg-card rounded-lg p-8 shadow-card">
+            <h2 className="text-2xl font-bold text-foreground mb-6">Custom Terms</h2>
+            <div className="prose prose-lg max-w-none">
+              <div 
+                className="text-muted-foreground leading-relaxed whitespace-pre-wrap"
+                dangerouslySetInnerHTML={{ __html: termsContent.replace(/\n/g, '<br />') }}
+              />
+            </div>
           </div>
         </div>
 

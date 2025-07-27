@@ -1,15 +1,49 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Check, Star, Clock } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Pricing = () => {
+  const [pricingContent, setPricingContent] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPricingContent = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('site_content')
+          .select('section, content')
+          .eq('page', 'pricing');
+
+        if (error) {
+          console.error('Error fetching pricing content:', error);
+          return;
+        }
+
+        const contentMap = data.reduce((acc, item) => {
+          acc[item.section] = item.content;
+          return acc;
+        }, {} as Record<string, string>);
+
+        setPricingContent(contentMap);
+      } catch (error) {
+        console.error('Error fetching pricing content:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPricingContent();
+  }, []);
+
   const pricingTiers = [
     {
-      name: "Basic",
-      price: "$5",
+      name: pricingContent.basic_title || "Basic",
+      price: `$${pricingContent.basic_price || "5"}`,
       duration: "per model",
       deliveryTime: "Delivery in 1 - 3 days",
-      description: "Perfect for simple modeling needs",
+      description: pricingContent.basic_description || "Perfect for simple modeling needs",
       features: [
         "Low-Poly modeling",
         "Up to 1 revision",
@@ -19,11 +53,11 @@ const Pricing = () => {
       ]
     },
     {
-      name: "Professional",
-      price: "$20",
+      name: pricingContent.premium_title || "Professional",
+      price: `$${pricingContent.premium_price || "20"}`,
       duration: "per model",
       deliveryTime: "Delivery in 4 - 7 days",
-      description: "Recommended for most projects",
+      description: pricingContent.premium_description || "Recommended for most projects",
       features: [
         "Mid-Poly modeling",
         "Up to 3 revisions",
@@ -34,11 +68,11 @@ const Pricing = () => {
       popular: true
     },
     {
-      name: "Premium",
-      price: "$50",
+      name: pricingContent.enterprise_title || "Premium",
+      price: `$${pricingContent.enterprise_price || "50"}`,
       duration: "per model",
       deliveryTime: "Delivery in 7 - 10 days",
-      description: "Everything you need for professional work",
+      description: pricingContent.enterprise_description || "Everything you need for professional work",
       features: [
         "High-Poly Modeling",
         "Unlimited of revisions",
@@ -52,6 +86,17 @@ const Pricing = () => {
   const handleDiscordRedirect = () => {
     window.open("https://discord.com/users/kosho_dev", "_blank");
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading pricing...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pt-24">
