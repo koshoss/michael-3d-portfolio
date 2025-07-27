@@ -96,7 +96,7 @@ const Reviews = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch reviews
+        // Fetch reviews with cache bypass
         const { data: reviewsData, error: reviewsError } = await supabase
           .from('reviews')
           .select('*')
@@ -129,6 +129,13 @@ const Reviews = () => {
     };
 
     fetchData();
+    
+    // Add a slight delay and refetch to ensure fresh data
+    const timeoutId = setTimeout(() => {
+      fetchData();
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
   }, [user]);
 
   const signInWithDiscord = async () => {
