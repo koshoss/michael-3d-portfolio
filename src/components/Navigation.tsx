@@ -1,9 +1,15 @@
 import { NavLink } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Home, FolderOpen, DollarSign, Star, FileText } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { User } from '@supabase/supabase-js';
 
 const Navigation = () => {
   console.log('Navigation.tsx: Navigation component rendering...');
+  const [user, setUser] = useState<User | null>(null);
+  const [userProfile, setUserProfile] = useState<any>(null);
+
   const navItems = [
     { name: "Home", path: "/", icon: Home },
     { name: "Portfolio", path: "/portfolio", icon: FolderOpen, isMain: true },
@@ -11,6 +17,53 @@ const Navigation = () => {
     { name: "Reviews", path: "/reviews", icon: Star },
     { name: "Terms", path: "/terms", icon: FileText },
   ];
+
+  // Set up auth state listener
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          setTimeout(() => {
+            fetchUserProfile(session.user.id);
+          }, 0);
+        } else {
+          setUserProfile(null);
+        }
+      }
+    );
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        fetchUserProfile(session.user.id);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Fetch user profile
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching profile:', error);
+      } else {
+        setUserProfile(data);
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    }
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -41,6 +94,19 @@ const Navigation = () => {
                 </Button>
               </NavLink>
             ))}
+            
+            {/* User Profile Picture or Default Visitor Image */}
+            <div className="flex items-center">
+              <img 
+                src={
+                  userProfile?.avatar_url || 
+                  "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=40&h=40&fit=crop&crop=face"
+                } 
+                alt={userProfile ? userProfile.username : "Visitor"}
+                className="w-10 h-10 rounded-full border-2 border-primary/30 object-cover transition-all duration-300 hover:border-primary"
+                title={userProfile ? `Logged in as ${userProfile.username}` : "Visitor"}
+              />
+            </div>
           </div>
         </div>
       </div>
