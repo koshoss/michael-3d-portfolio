@@ -100,11 +100,11 @@ const Navigation = () => {
               <img 
                 src={
                   userProfile?.avatar_url || 
-                  "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=40&h=40&fit=crop&crop=face"
-                } 
-                alt={userProfile ? userProfile.username : "Visitor"}
+                  "/lovable-uploads/e797256a-0128-4706-85bc-cc98d47415ca.png"
+                }
+                alt={userProfile ? userProfile.username : "Guest"}
                 className="w-10 h-10 rounded-full border-2 border-primary/30 object-cover transition-all duration-300 hover:border-primary"
-                title={userProfile ? `Logged in as ${userProfile.username}` : "Visitor"}
+                title={userProfile ? `Logged in as ${userProfile.username}` : "Guest"}
               />
             </div>
           </div>
