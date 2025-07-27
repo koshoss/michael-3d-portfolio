@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { Star, Quote, Edit3, Save, X } from "lucide-react";
+import { Star, Edit3, Save, X, LogIn, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { User, Session } from '@supabase/supabase-js';
 
 interface Review {
   id: string;
@@ -10,18 +11,29 @@ interface Review {
   rating: number;
   review_text: string;
   created_at: string;
-  user_identifier: string;
+  user_id: string;
+  discord_username: string;
+  discord_avatar_url: string;
   isUserReview?: boolean;
 }
 
+interface Profile {
+  id: string;
+  user_id: string;
+  discord_id: string;
+  username: string;
+  avatar_url: string;
+}
+
 const Reviews = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [userProfile, setUserProfile] = useState<Profile | null>(null);
   const [formData, setFormData] = useState({
-    name: "",
     review: "",
     rating: 0
   });
   const [errors, setErrors] = useState({
-    name: "",
     review: "",
     rating: ""
   });
@@ -29,18 +41,56 @@ const Reviews = () => {
   const [editText, setEditText] = useState("");
   const [reviews, setReviews] = useState<Review[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
-  const [userIdentifier, setUserIdentifier] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
-  // Generate or get user identifier
+  // Set up auth state listener
   useEffect(() => {
-    let identifier = localStorage.getItem('user-identifier');
-    if (!identifier) {
-      identifier = `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      localStorage.setItem('user-identifier', identifier);
-    }
-    setUserIdentifier(identifier);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          setTimeout(() => {
+            fetchUserProfile(session.user.id);
+          }, 0);
+        } else {
+          setUserProfile(null);
+        }
+      }
+    );
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        fetchUserProfile(session.user.id);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
+
+  // Fetch user profile
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching profile:', error);
+      } else {
+        setUserProfile(data);
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    }
+  };
 
   // Load reviews and projects from Supabase
   useEffect(() => {
@@ -57,7 +107,7 @@ const Reviews = () => {
         } else {
           const processedReviews = reviewsData.map(review => ({
             ...review,
-            isUserReview: review.user_identifier === userIdentifier
+            isUserReview: user ? review.user_id === user.id : false
           }));
           setReviews(processedReviews);
         }
@@ -78,54 +128,70 @@ const Reviews = () => {
       }
     };
 
-    if (userIdentifier) {
-      fetchData();
-    }
-  }, [userIdentifier]);
+    fetchData();
+  }, [user]);
 
-  // Static reviews are commented out until there are real client reviews
-  // const staticReviews = [
-  //   {
-  //     id: "static-1",
-  //     name: "Alex Thompson",
-  //     rating: 5,
-  //     review_text: "Michael delivered an absolutely stunning character model that exceeded all my expectations. The attention to detail and quality of work is professional-grade. Highly recommended!",
-  //     created_at: "2024-01-01",
-  //     user_identifier: "static",
-  //     isUserReview: false
-  //   },
-  //   {
-  //     id: "static-2",
-  //     name: "Sarah Chen",
-  //     rating: 5,
-  //     review_text: "Incredible work on my futuristic vehicle design. Michael understood my vision perfectly and brought it to life with amazing texturing and lighting. Fast delivery too!",
-  //     created_at: "2024-01-02",
-  //     user_identifier: "static",
-  //     isUserReview: false
-  //   },
-  //   {
-  //     id: "static-3",
-  //     name: "Jordan Lee",
-  //     rating: 5,
-  //     review_text: "Michael created a full set of medieval weapons for my game project. Each piece was meticulously crafted with realistic textures. Professional communication throughout the process.",
-  //     created_at: "2024-01-03",
-  //     user_identifier: "static",
-  //     isUserReview: false
-  //   }
-  // ];
+  const signInWithDiscord = async () => {
+    setLoading(true);
+    try {
+      const redirectUrl = `${window.location.origin}/reviews`;
+      
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'discord',
+        options: {
+          redirectTo: redirectUrl
+        }
+      });
+
+      if (error) {
+        console.error('Discord login error:', error);
+        toast({
+          title: "Login Error",
+          description: "Failed to login with Discord. Please try again.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Discord login error:', error);
+      toast({
+        title: "Login Error",
+        description: "Failed to login with Discord. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signOut = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Sign out error:', error);
+        toast({
+          title: "Error",
+          description: "Failed to sign out. Please try again.",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Signed out",
+          description: "You have been successfully signed out.",
+        });
+      }
+    } catch (error) {
+      console.error('Sign out error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const validateForm = () => {
     const newErrors = {
-      name: "",
       review: "",
       rating: ""
     };
-
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
-    } else if (formData.name.trim().length < 2) {
-      newErrors.name = "Name must be at least 2 characters";
-    }
 
     if (!formData.review.trim()) {
       newErrors.review = "Review is required";
@@ -139,19 +205,28 @@ const Reviews = () => {
 
     // Check if user has already submitted a review
     const existingReview = reviews.find(
-      review => review.user_identifier === userIdentifier
+      review => user && review.user_id === user.id
     );
     if (existingReview) {
-      newErrors.name = "You have already submitted a review. You can edit your existing review below.";
+      newErrors.review = "You have already submitted a review. You can edit your existing review below.";
     }
 
     setErrors(newErrors);
-    return !newErrors.name && !newErrors.review && !newErrors.rating;
+    return !newErrors.review && !newErrors.rating;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!user || !userProfile) {
+      toast({
+        title: "Authentication Required",
+        description: "Please login with Discord to submit a review.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (!validateForm()) {
       return;
     }
@@ -163,10 +238,12 @@ const Reviews = () => {
         .from('reviews')
         .insert([
           {
-            user_identifier: userIdentifier,
-            name: formData.name.trim(),
+            user_id: user.id,
+            name: userProfile.username,
             rating: formData.rating,
-            review_text: formData.review.trim()
+            review_text: formData.review.trim(),
+            discord_username: userProfile.username,
+            discord_avatar_url: userProfile.avatar_url
           }
         ])
         .select()
@@ -188,8 +265,8 @@ const Reviews = () => {
       };
 
       setReviews(prev => [newReview, ...prev]);
-      setFormData({ name: "", review: "", rating: 0 });
-      setErrors({ name: "", review: "", rating: "" });
+      setFormData({ review: "", rating: 0 });
+      setErrors({ review: "", rating: "" });
 
       toast({
         title: "Review submitted!",
@@ -207,14 +284,13 @@ const Reviews = () => {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
     
-    // Clear error when user starts typing
     if (errors[name as keyof typeof errors]) {
       setErrors(prev => ({
         ...prev,
@@ -257,7 +333,7 @@ const Reviews = () => {
         .from('reviews')
         .update({ review_text: editText.trim() })
         .eq('id', reviewId)
-        .eq('user_identifier', userIdentifier);
+        .eq('user_id', user?.id);
 
       if (error) {
         console.error('Error updating review:', error);
@@ -325,7 +401,7 @@ const Reviews = () => {
   };
 
   // Calculate real statistics from database
-  const allReviews = reviews; // Only use real reviews from database
+  const allReviews = reviews;
   const averageRating = allReviews.length > 0 
     ? (allReviews.reduce((sum, review) => sum + review.rating, 0) / allReviews.length).toFixed(1)
     : "5.0";
@@ -352,10 +428,48 @@ const Reviews = () => {
   return (
     <div className="min-h-screen bg-background pt-24">
       <div className="container mx-auto px-4 py-16">
+        {/* Header with Discord Authentication */}
         <div className="text-center mb-16 animate-fade-in">
-          <h1 className="text-5xl font-bold text-foreground mb-6">
-            Client <span className="text-primary">Reviews</span>
-          </h1>
+          <div className="flex items-center justify-center gap-4 mb-6">
+            {userProfile ? (
+              <div className="flex items-center gap-4">
+                <img 
+                  src={userProfile.avatar_url || '/placeholder.svg'} 
+                  alt={userProfile.username}
+                  className="w-16 h-16 rounded-full border-2 border-primary"
+                />
+                <div className="text-left">
+                  <h1 className="text-5xl font-bold text-foreground">
+                    Welcome, <span className="text-primary">{userProfile.username}</span>
+                  </h1>
+                  <Button
+                    onClick={signOut}
+                    variant="outline"
+                    size="sm"
+                    disabled={loading}
+                    className="mt-2"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <h1 className="text-5xl font-bold text-foreground mb-6">
+                  Client <span className="text-primary">Reviews</span>
+                </h1>
+                <Button
+                  onClick={signInWithDiscord}
+                  disabled={loading}
+                  className="bg-[#5865F2] hover:bg-[#4752C4] text-white font-semibold py-2 px-6 rounded-lg"
+                >
+                  <LogIn className="w-4 h-4 mr-2" />
+                  {loading ? "Connecting..." : "Login with Discord"}
+                </Button>
+              </div>
+            )}
+          </div>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             See what my clients say about their experience working with me on their 3D modeling projects.
           </p>
@@ -375,87 +489,68 @@ const Reviews = () => {
           ))}
         </div>
 
-        {/* Leave a Review Form */}
-        <div className="max-w-2xl mx-auto mb-16">
-          <div className="bg-card rounded-lg p-8 shadow-card hover:shadow-glow transition-all duration-300">
-            <h2 className="text-3xl font-bold text-foreground mb-6 text-center flex items-center justify-center gap-3">
-              <Star className="text-primary" />
-              Leave a Review
-            </h2>
-            <p className="text-muted-foreground text-center mb-8">
-              Share your experience working with Michael and help others discover quality 3D modeling services.
-            </p>
-            
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
-                  Your Name *
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  disabled={loading}
-                  className={`w-full px-4 py-3 bg-secondary border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 ${
-                    errors.name ? 'border-destructive' : 'border-border hover:border-primary/50'
-                  } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  placeholder="Enter your name"
-                />
-                {errors.name && (
-                  <p className="text-destructive text-sm mt-1">{errors.name}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-3">
-                  Rating *
-                </label>
-                <div className="flex items-center gap-2 mb-2">
-                  {renderStars(formData.rating, !loading, handleStarClick)}
-                  {formData.rating > 0 && (
-                    <span className="text-sm text-muted-foreground ml-2">
-                      ({formData.rating} star{formData.rating !== 1 ? 's' : ''})
-                    </span>
+        {/* Leave a Review Form - Only show if authenticated */}
+        {user && userProfile && (
+          <div className="max-w-2xl mx-auto mb-16">
+            <div className="bg-card rounded-lg p-8 shadow-card hover:shadow-glow transition-all duration-300">
+              <h2 className="text-3xl font-bold text-foreground mb-6 text-center flex items-center justify-center gap-3">
+                <Star className="text-primary" />
+                Leave a Review
+              </h2>
+              <p className="text-muted-foreground text-center mb-8">
+                Share your experience working with Michael and help others discover quality 3D modeling services.
+              </p>
+              
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-3">
+                    Rating *
+                  </label>
+                  <div className="flex items-center gap-2 mb-2">
+                    {renderStars(formData.rating, !loading, handleStarClick)}
+                    {formData.rating > 0 && (
+                      <span className="text-sm text-muted-foreground ml-2">
+                        ({formData.rating} star{formData.rating !== 1 ? 's' : ''})
+                      </span>
+                    )}
+                  </div>
+                  {errors.rating && (
+                    <p className="text-destructive text-sm mt-1">{errors.rating}</p>
                   )}
                 </div>
-                {errors.rating && (
-                  <p className="text-destructive text-sm mt-1">{errors.rating}</p>
-                )}
-              </div>
 
-              <div>
-                <label htmlFor="review" className="block text-sm font-medium text-foreground mb-2">
-                  Your Review *
-                </label>
-                <textarea
-                  id="review"
-                  name="review"
-                  value={formData.review}
-                  onChange={handleInputChange}
+                <div>
+                  <label htmlFor="review" className="block text-sm font-medium text-foreground mb-2">
+                    Your Review *
+                  </label>
+                  <textarea
+                    id="review"
+                    name="review"
+                    value={formData.review}
+                    onChange={handleInputChange}
+                    disabled={loading}
+                    rows={5}
+                    className={`w-full px-4 py-3 bg-secondary border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none ${
+                      errors.review ? 'border-destructive' : 'border-border hover:border-primary/50'
+                    } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    placeholder="Tell others about your experience working with Michael..."
+                  />
+                  {errors.review && (
+                    <p className="text-destructive text-sm mt-1">{errors.review}</p>
+                  )}
+                </div>
+
+                <Button
+                  type="submit"
                   disabled={loading}
-                  rows={5}
-                  className={`w-full px-4 py-3 bg-secondary border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none ${
-                    errors.review ? 'border-destructive' : 'border-border hover:border-primary/50'
-                  } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  placeholder="Tell others about your experience working with Michael..."
-                />
-                {errors.review && (
-                  <p className="text-destructive text-sm mt-1">{errors.review}</p>
-                )}
-              </div>
-
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 rounded-lg shadow-deep hover:shadow-glow transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-              >
-                {loading ? "Submitting..." : "Submit Review"}
-              </Button>
-            </form>
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 rounded-lg shadow-deep hover:shadow-glow transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                >
+                  {loading ? "Submitting..." : "Submit Review"}
+                </Button>
+              </form>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Reviews Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -468,13 +563,19 @@ const Reviews = () => {
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="flex items-start gap-4 mb-4">
-                <div className="bg-primary/20 rounded-lg p-3 flex-shrink-0">
-                  <div className="text-3xl font-bold text-primary">{Math.round(review.rating * 20)}</div>
+                <div className="flex-shrink-0">
+                  <img 
+                    src={review.discord_avatar_url || '/placeholder.svg'} 
+                    alt={review.discord_username || review.name}
+                    className="w-12 h-12 rounded-full border-2 border-primary/30"
+                  />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
-                      <h3 className="font-semibold text-foreground">{review.name}</h3>
+                      <h3 className="font-semibold text-foreground">
+                        {review.discord_username || review.name}
+                      </h3>
                       {review.isUserReview && (
                         <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
                           Your Review
