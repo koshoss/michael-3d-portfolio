@@ -149,7 +149,7 @@ const Pricing = () => {
                 </p>
                 <Button 
                   variant="outline" 
-                  onClick={() => window.open("https://paypal.me/youraccount", "_blank")}
+                  onClick={() => window.open("https://paypal.me/KoshoDev", "_blank")}
                 >
                   Pay via PayPal
                 </Button>
