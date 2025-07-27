@@ -437,7 +437,7 @@ const Reviews = () => {
             {userProfile ? (
               <div className="flex items-center gap-4">
                 <img 
-                  src={userProfile.avatar_url || '/lovable-uploads/f5d62cbb-f9c6-42b1-8463-daa2222d8047.png'} 
+                  src={userProfile.avatar_url || '/lovable-uploads/ada9d165-d002-4a6c-8179-20141adaac10.png'} 
                   alt={userProfile.username}
                   className="w-24 h-24 rounded-full border-4 border-primary shadow-lg"
                 />
@@ -568,7 +568,7 @@ const Reviews = () => {
               <div className="flex items-start gap-4 mb-4">
                 <div className="flex-shrink-0">
                   <img 
-                    src={review.discord_avatar_url || '/lovable-uploads/f5d62cbb-f9c6-42b1-8463-daa2222d8047.png'} 
+                    src={review.discord_avatar_url || '/lovable-uploads/ada9d165-d002-4a6c-8179-20141adaac10.png'} 
                     alt={review.discord_username || review.name || 'Guest'}
                     className="w-16 h-16 rounded-full border-2 border-primary/30"
                   />
