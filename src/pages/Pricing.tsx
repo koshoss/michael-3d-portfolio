@@ -61,7 +61,7 @@ const Pricing = () => {
             Pricing Plans
           </h1>
           <p className="text-lg text-muted-foreground">
-            1$ = 200 Robux
+            1$ = 250 Robux
           </p>
         </div>
 
