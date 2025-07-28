@@ -584,7 +584,7 @@ const Reviews = () => {
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
                       <h3 className="font-semibold text-foreground">
-                        {review.discord_username || review.name}
+                        @{review.discord_username || review.name}
                       </h3>
                       {review.isUserReview && (
                         <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
