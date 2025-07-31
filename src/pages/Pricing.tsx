@@ -8,7 +8,7 @@ const Pricing = () => {
       name: "Basic",
       price: "$5",
       duration: "per model",
-      deliveryTime: "Delivery in 1 - 3 days",
+      deliveryTime: "Delivery in 1 - 2 days",
       description: "Perfect for simple modeling needs",
       features: [
         "Low-Poly modeling",
@@ -22,7 +22,7 @@ const Pricing = () => {
       name: "Professional",
       price: "$10",
       duration: "per model",
-      deliveryTime: "Delivery in 4 - 7 days",
+      deliveryTime: "Delivery in 2 - 4 days",
       description: "Recommended for most projects",
       features: [
         "Mid-Poly modeling",
@@ -37,7 +37,7 @@ const Pricing = () => {
       name: "Premium",
       price: "$25",
       duration: "per model",
-      deliveryTime: "Delivery in 7 - 10 days",
+      deliveryTime: "Delivery in 4 - 7 days",
       description: "Everything you need for professional work",
       features: [
         "High-Poly Modeling",
