@@ -20,7 +20,7 @@ const Pricing = () => {
     },
     {
       name: "Professional",
-      price: "$20",
+      price: "$10",
       duration: "per model",
       deliveryTime: "Delivery in 4 - 7 days",
       description: "Recommended for most projects",
@@ -35,7 +35,7 @@ const Pricing = () => {
     },
     {
       name: "Premium",
-      price: "$50",
+      price: "$25",
       duration: "per model",
       deliveryTime: "Delivery in 7 - 10 days",
       description: "Everything you need for professional work",
