@@ -119,6 +119,57 @@ const Pricing = () => {
           ))}
         </div>
 
+        <div className="mt-16 grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          <div className="bg-card rounded-lg p-8 shadow-card">
+            <h3 className="text-2xl font-bold text-foreground mb-4">
+              📦 Package Deals
+            </h3>
+            <p className="text-muted-foreground mb-4">
+              Order multiple models and save!
+            </p>
+            <ul className="space-y-2 text-sm text-muted-foreground mb-6">
+              <li>• 3 Models = 15% OFF</li>
+              <li>• 5 Models = 25% OFF</li>
+              <li>• 10+ Models = 35% OFF</li>
+            </ul>
+            <Button variant="outline" onClick={handleDiscordRedirect}>
+              Get Package Deal
+            </Button>
+          </div>
+
+          <div className="bg-card rounded-lg p-8 shadow-card">
+            <h3 className="text-2xl font-bold text-foreground mb-4">
+              ⚡ Rush Delivery
+            </h3>
+            <p className="text-muted-foreground mb-4">
+              Need it faster? We've got you covered!
+            </p>
+            <ul className="space-y-2 text-sm text-muted-foreground mb-6">
+              <li>• 24-48 hours delivery</li>
+              <li>• +50% of base price</li>
+              <li>• Priority queue</li>
+            </ul>
+            <Button variant="outline" onClick={handleDiscordRedirect}>
+              Request Rush Order
+            </Button>
+          </div>
+        </div>
+
+        <div className="mt-16 text-center">
+          <div className="bg-card rounded-lg p-8 shadow-card max-w-4xl mx-auto">
+            <h3 className="text-2xl font-bold text-foreground mb-4">
+              🎯 Loyalty Program
+            </h3>
+            <p className="text-muted-foreground mb-6">
+              Returning customers get special discounts! After 5 completed orders, 
+              enjoy 10% off all future projects. After 10 orders, get 20% off permanently.
+            </p>
+            <Button variant="default" onClick={handleDiscordRedirect}>
+              Join Loyalty Program
+            </Button>
+          </div>
+        </div>
+
         <div className="mt-16 text-center">
           <div className="bg-card rounded-lg p-8 shadow-card max-w-4xl mx-auto">
             <h3 className="text-2xl font-bold text-foreground mb-4">
