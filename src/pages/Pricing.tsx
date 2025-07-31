@@ -128,9 +128,9 @@ const Pricing = () => {
               Order multiple models and save!
             </p>
             <ul className="space-y-2 text-sm text-muted-foreground mb-6">
-              <li>• 3 Models = 15% OFF</li>
-              <li>• 5 Models = 25% OFF</li>
-              <li>• 10+ Models = 35% OFF</li>
+              <li>• 3 Models = 5% OFF</li>
+              <li>• 5 Models = 10% OFF</li>
+              <li>• 10+ Models = 15% OFF</li>
             </ul>
             <Button variant="outline" onClick={handleDiscordRedirect}>
               Get Package Deal
@@ -146,7 +146,7 @@ const Pricing = () => {
             </p>
             <ul className="space-y-2 text-sm text-muted-foreground mb-6">
               <li>• 24-48 hours delivery</li>
-              <li>• +50% of base price</li>
+              <li>• +30% of base price</li>
               <li>• Priority queue</li>
             </ul>
             <Button variant="outline" onClick={handleDiscordRedirect}>
@@ -162,7 +162,7 @@ const Pricing = () => {
             </h3>
             <p className="text-muted-foreground mb-6">
               Returning customers get special discounts! After 5 completed orders, 
-              enjoy 10% off all future projects. After 10 orders, get 20% off permanently.
+              enjoy 5% off all future projects. After 10 orders, get 10% off permanently.
             </p>
             <Button variant="default" onClick={handleDiscordRedirect}>
               Join Loyalty Program
