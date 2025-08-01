@@ -440,16 +440,16 @@ const Reviews = () => {
       <div className="container mx-auto px-4 py-16">
         {/* Header with Discord Authentication */}
         <div className="text-center mb-16 animate-fade-in">
-          <div className="flex items-center justify-center gap-4 mb-6">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-6">
             {userProfile ? (
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col md:flex-row items-center gap-4">
                 <img 
                   src={userProfile.avatar_url || '/lovable-uploads/ada9d165-d002-4a6c-8179-20141adaac10.png'} 
                   alt={userProfile.username}
-                  className="w-24 h-24 rounded-full border-4 border-primary shadow-lg"
+                  className="w-16 h-16 md:w-24 md:h-24 rounded-full border-4 border-primary shadow-lg"
                 />
-                <div className="text-left">
-                  <h1 className="text-5xl font-bold text-foreground">
+                <div className="text-center md:text-left">
+                  <h1 className="text-3xl md:text-5xl font-bold text-foreground">
                     Welcome, <span className="text-primary">{userProfile.username}</span>
                   </h1>
                   <Button
@@ -466,13 +466,13 @@ const Reviews = () => {
               </div>
             ) : (
               <div>
-                <h1 className="text-5xl font-bold text-foreground mb-6">
+                <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
                   Client <span className="text-primary">Reviews</span>
                 </h1>
                 <Button
                   onClick={signInWithDiscord}
                   disabled={loading}
-                  className="bg-[#5865F2] hover:bg-[#4752C4] text-white font-semibold py-2 px-6 rounded-lg"
+                  className="bg-[#5865F2] hover:bg-[#4752C4] text-white font-semibold py-2 px-6 rounded-lg w-full md:w-auto"
                 >
                   <LogIn className="w-4 h-4 mr-2" />
                   {loading ? "Connecting..." : "Login with Discord"}
@@ -480,7 +480,7 @@ const Reviews = () => {
               </div>
             )}
           </div>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto px-4">
             See what my clients say about their experience working with me on their 3D modeling projects.
           </p>
         </div>
