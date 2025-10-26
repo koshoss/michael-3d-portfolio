@@ -12,6 +12,13 @@ import weapon4 from "@/assets/weapon-4.png";
 import weapon5 from "@/assets/weapon-5.png";
 import weapon6 from "@/assets/weapon-6.png";
 import weapon10 from "@/assets/weapon-10.png";
+import ugcHornedSkull from "@/assets/ugc-horned-skull.png";
+import ugcSkullMask from "@/assets/ugc-skull-mask.png";
+import ugcJawMask from "@/assets/ugc-jaw-mask.png";
+import ugcBeadedBracelet from "@/assets/ugc-beaded-bracelet.png";
+import ugcChristmasHeadphones from "@/assets/ugc-christmas-headphones.png";
+import ugcMoonNecklace from "@/assets/ugc-moon-necklace.png";
+import ugcCoinPendant from "@/assets/ugc-coin-pendant.png";
 
 const Portfolio = () => {
   const [activeCategory, setActiveCategory] = useState("All");
@@ -98,6 +105,62 @@ const Portfolio = () => {
       tools: ["Blender", "Krita"],
       category: "Vehicles",
       description: "High-speed racing vehicle with aerodynamic design"
+    },
+    {
+      id: 11,
+      title: "Horned Skull Mask",
+      image: ugcHornedSkull,
+      tools: ["Blender", "Substance Painter"],
+      category: "UGC",
+      description: "Demonic skull mask with curved horns"
+    },
+    {
+      id: 12,
+      title: "White Skull Mask",
+      image: ugcSkullMask,
+      tools: ["Blender", "ZBrush"],
+      category: "UGC",
+      description: "Angular white skull mask with sharp features"
+    },
+    {
+      id: 13,
+      title: "Jaw Mask",
+      image: ugcJawMask,
+      tools: ["Blender", "Substance Painter"],
+      category: "UGC",
+      description: "Lower jaw skeleton mask with fangs"
+    },
+    {
+      id: 14,
+      title: "Beaded Bracelet",
+      image: ugcBeadedBracelet,
+      tools: ["Blender", "Substance Painter"],
+      category: "UGC",
+      description: "Golden beaded bracelet accessory"
+    },
+    {
+      id: 15,
+      title: "Christmas Headphones",
+      image: ugcChristmasHeadphones,
+      tools: ["Blender", "Substance Painter"],
+      category: "UGC",
+      description: "Festive candy cane themed headphones"
+    },
+    {
+      id: 16,
+      title: "Moon Necklace",
+      image: ugcMoonNecklace,
+      tools: ["Blender", "Substance Painter"],
+      category: "UGC",
+      description: "Silver chain necklace with crescent moon pendant"
+    },
+    {
+      id: 17,
+      title: "Chinese Coin Pendant",
+      image: ugcCoinPendant,
+      tools: ["Blender", "Substance Painter"],
+      category: "UGC",
+      description: "Traditional golden coin pendant on black cord"
     },
   ];
 
