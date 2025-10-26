@@ -19,6 +19,12 @@ import ugcBeadedBracelet from "@/assets/ugc-beaded-bracelet.png";
 import ugcChristmasHeadphones from "@/assets/ugc-christmas-headphones.png";
 import ugcMoonNecklace from "@/assets/ugc-moon-necklace.png";
 import ugcCoinPendant from "@/assets/ugc-coin-pendant.png";
+import tieBlack from "@/assets/tie-black.png";
+import tieBrown from "@/assets/tie-brown.png";
+import tieBlue from "@/assets/tie-blue.png";
+import tieNavy from "@/assets/tie-navy.png";
+import tieGray from "@/assets/tie-gray.png";
+import tieRed from "@/assets/tie-red.png";
 
 const Portfolio = () => {
   const [activeCategory, setActiveCategory] = useState("All");
@@ -162,6 +168,22 @@ const Portfolio = () => {
       category: "UGC",
       description: "Traditional golden coin pendant on black cord"
     },
+    {
+      id: 18,
+      title: "Classic Striped Tie",
+      image: tieBlack,
+      tools: ["Blender", "Substance Painter"],
+      category: "UGC",
+      description: "Elegant striped tie with multiple color variants",
+      colorVariants: [
+        { color: "Black", image: tieBlack, displayColor: "#1a1a1a" },
+        { color: "Brown", image: tieBrown, displayColor: "#5c3a3a" },
+        { color: "Blue", image: tieBlue, displayColor: "#3a5c8c" },
+        { color: "Navy", image: tieNavy, displayColor: "#1e2f4d" },
+        { color: "Gray", image: tieGray, displayColor: "#7a7a7a" },
+        { color: "Red", image: tieRed, displayColor: "#a83a3a" },
+      ]
+    },
   ];
 
   const filteredProjects = activeCategory === "All" 
@@ -211,6 +233,7 @@ const Portfolio = () => {
                 tools={project.tools}
                 category={project.category}
                 description={project.description}
+                colorVariants={project.colorVariants}
               />
             </div>
           ))}
