@@ -11,6 +11,7 @@ import weapon3 from "@/assets/weapon-3.png";
 import weapon4 from "@/assets/weapon-4.png";
 import weapon5 from "@/assets/weapon-5.png";
 import weapon6 from "@/assets/weapon-6.png";
+import weapon10 from "@/assets/weapon-10.png";
 
 const Portfolio = () => {
   const [activeCategory, setActiveCategory] = useState("All");
@@ -68,27 +69,27 @@ const Portfolio = () => {
     },
     {
       id: 8,
-      title: "Demon Spear",
+      title: "Shadow Sword",
       image: weapon4,
       tools: ["ZBrush", "Substance Painter"],
       category: "Weapons",
-      description: "Cursed spear with demonic decorations"
+      description: "Dark blade with mystical shadow decorations"
     },
     {
       id: 9,
-      title: "Vampire Blade",
+      title: "Shadow Bow",
       image: weapon5,
       tools: ["Blender", "Substance Painter"],
       category: "Weapons",
-      description: "Gothic curved blade with spiked edges"
+      description: "Dark curved bow with ornate shadow design"
     },
     {
       id: 10,
-      title: "Thorn Spear",
-      image: weapon6,
+      title: "Shadow Spear",
+      image: weapon10,
       tools: ["ZBrush", "Krita"],
       category: "Weapons",
-      description: "Long spear with ornamental thorned decorations"
+      description: "Dark spear with shadowy ornamental decorations"
     },
     {
       id: 6,
