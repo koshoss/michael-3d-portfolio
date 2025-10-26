@@ -5,6 +5,12 @@ import portfolioHero from "@/assets/portfolio-hero.jpg";
 import projectCharacter1 from "@/assets/project-character-1.jpg";
 import projectWeapon1 from "@/assets/project-weapon-1.jpg";
 import projectVehicle1 from "@/assets/project-vehicle-1.jpg";
+import weapon1 from "@/assets/weapon-1.png";
+import weapon2 from "@/assets/weapon-2.png";
+import weapon3 from "@/assets/weapon-3.png";
+import weapon4 from "@/assets/weapon-4.png";
+import weapon5 from "@/assets/weapon-5.png";
+import weapon6 from "@/assets/weapon-6.png";
 
 const Portfolio = () => {
   const [activeCategory, setActiveCategory] = useState("All");
@@ -22,11 +28,11 @@ const Portfolio = () => {
     },
     {
       id: 2,
-      title: "Plasma Rifle",
-      image: projectWeapon1,
-      tools: ["ZBrush", "Krita"],
+      title: "Crystal Blade",
+      image: weapon1,
+      tools: ["Blender", "Substance Painter"],
       category: "Weapons",
-      description: "Futuristic weapon with glowing energy effects"
+      description: "Mystical dagger with glowing crystal blade"
     },
     {
       id: 3,
@@ -46,11 +52,43 @@ const Portfolio = () => {
     },
     {
       id: 5,
-      title: "Magic Sword",
-      image: projectWeapon1,
+      title: "Death Scythe",
+      image: weapon2,
+      tools: ["ZBrush", "Blender"],
+      category: "Weapons",
+      description: "Dark reaper scythe with intricate blade design"
+    },
+    {
+      id: 7,
+      title: "Shadow Scythe",
+      image: weapon3,
+      tools: ["Blender", "Krita"],
+      category: "Weapons",
+      description: "Dark fantasy scythe with ornate details"
+    },
+    {
+      id: 8,
+      title: "Demon Spear",
+      image: weapon4,
       tools: ["ZBrush", "Substance Painter"],
       category: "Weapons",
-      description: "Enchanted blade with mystical runes and effects"
+      description: "Cursed spear with demonic decorations"
+    },
+    {
+      id: 9,
+      title: "Vampire Blade",
+      image: weapon5,
+      tools: ["Blender", "Substance Painter"],
+      category: "Weapons",
+      description: "Gothic curved blade with spiked edges"
+    },
+    {
+      id: 10,
+      title: "Thorn Spear",
+      image: weapon6,
+      tools: ["ZBrush", "Krita"],
+      category: "Weapons",
+      description: "Long spear with ornamental thorned decorations"
     },
     {
       id: 6,
